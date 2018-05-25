@@ -42,7 +42,11 @@ if (knownAddr.length > 0) {
 
 var gossipProcess = setInterval(() => {
   gossip.passTime();
-},2000);
+},500);
+// 
+// var getMembers = setInterval(() => {
+//   gossip.printMembers();
+// },15000);
 
 app.listen(addr,function(){
   console.log("Listening on port",addr);

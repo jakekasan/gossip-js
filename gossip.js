@@ -22,10 +22,21 @@ module.exports = class Gossiper {
   }
 
   addMemberFromPort(port){
-    if (this.members.map(member => { return member.port}).includes(port)) {
+    if (port == this.port) {
       return
     }
-    fetch('http://localhost:'+port+'/info').then(res => res.json()).then(json => this.members.push(new Member(json.name,json.port))).catch(() => {});
+    for (let member of this.members) {
+      if (member.port == port) {
+        return
+      }
+    }
+    let existingPorts = this.members.map(member => { return member.port });
+    if (existingPorts.includes(port) || port == undefined || port == this.port) {
+      return
+    } else {
+      fetch('http://localhost:'+port+'/info').then(res => res.json()).then(json => this.members.push(new Member(json.name,json.port))).catch(() => {});
+    }
+
   }
 
   checkMembers(){
@@ -60,15 +71,11 @@ module.exports = class Gossiper {
     if (this.members.length < 1) {
       return;
     }
-    console.log("Comparing member info");
     for (let member of this.members) {
       if (member.alive) {
-        console.log("Getting member info");
         member.getInfo().then(res => res.json()).then(data => {
           if (data.length > this.info.length) {
-            console.log("Member data is longer than mine");
             if (!data.map(x => { return badWords.includes(x) }).includes(true)) {
-              console.log("Overwriting info...");
               this.info = data;
             }
           }
@@ -125,8 +132,17 @@ module.exports = class Gossiper {
       this.info.push(goodWords[Math.floor(Math.random()*goodWords.length)]);
     }
   }
+
+  printMembers(){
+    for (let member of this.members){
+      console.log(member.name,member.port);
+    }
+  }
 }
 
+// 
+// badWords = ["boobs","whoopie","mashugga","chicken"]
+// goodWords = ["alpha","beta","cupcake","donut","eclaire","froyo","gingerbread","honeycomb","ice cream sandwhich","jelly bean","kitkat","lollipop","marshmallow","nugat","oreo","pancake"]
 
-badWords = ["boobs","whoopie","mashugga","chicken"]
-goodWords = ["alpha","beta","cupcake","donut","eclaire","froyo","gingerbread","honeycomb","ice cream sandwhich","jelly bean","kitkat","lollipop","marshmallow","nugat","oreo","pancake"]
+badWords = [1,2,3,4,5,6,7,8,9,0]
+goodWords = ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"];
