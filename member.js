@@ -1,60 +1,26 @@
 const fetch = require('node-fetch');
 
 
-class Member {
+module.exports = class Member {
   constructor(name,port){
     this.name = name;
     this.port = port;
-    this.alive = (this.getAliveState()) ? true : false;
-    this.info = this.getInfo();
-    this.knownMembers = this.getKnownMembers();
+    this.alive = this.getAliveState().then(() => true).catch(() => false);
+    this.info = this.getInfo().then(res => res.json()).catch(() => []);
+    this.knownMembers = this.getKnownMembers().then(res => res.json()).catch(() => []);
   }
 
-  async getKnownMembers(){
-    try {
-      let response = await fetch("http://localhost:" + this.port + "/members");
-      let data = await response.json();
-      console.log("Fetched data from ",this.port);
-      return data;
-    } catch (e) {
-      console.log("Failed to catch data from",this.port);
-      return;
-    }
+
+  getKnownMembers(){
+    return fetch("http://localhost:" + this.port + "/members");
   }
 
-  async getInfo(){
-    try {
-      let response = await fetch("http://localhost:" + this.port + "/data");
-      let data = await response.json();
-      console.log("Fetched info from",this.port);
-      return data;
-    } catch (e) {
-      console.log("Failed to fetch info from",this.port);
-      return undefined;
-    }
+  getInfo(){
+    return fetch("http://localhost:" + this.port + "/data");
   }
 
-  async getAliveState(){
-    try {
-      let response = await fetch("http://localhost:" + this.port + "/info");
-      let data = await response.json();
-      console.log("Checking if",this.port,"is alive");
-      return true;
-    } catch (e) {
-      console.log(this.port,"is not alive");
-      return false;
-    }
-  }
-
-  async gossipTo(){
-    return
-    try {
-      let response = await fetch("http://localhost:" + this.port + "/");
-    } catch (e) {
-
-    } finally {
-
-    }
+  getAliveState(){
+    return fetch("http://localhost:" + this.port + "/info");
   }
 
   printInfo(member){
