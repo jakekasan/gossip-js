@@ -2,9 +2,9 @@
 class Member {
   constructor(port){
     this.port = port;
-    this.alive = getAliveState();
-    this.info = getInfo();
-    this.knownMembers = getKnownMembers();
+    this.alive = this.getAliveState();
+    this.info = this.getInfo();
+    this.knownMembers = this.getKnownMembers();
   }
 
   async getKnownMembers(){
@@ -40,6 +40,16 @@ class Member {
     } catch (e) {
       console.log(this.port,"is not alive");
       return;
+    }
+  }
+
+  async gossipTo(){
+    try {
+      let response = await fetch(this.port + "/")
+    } catch (e) {
+
+    } finally {
+
     }
   }
 

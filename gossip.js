@@ -1,12 +1,13 @@
 class Gossiper {
-  constructor(port,members) {
+  constructor(name,port,members) {
+    this.name = name;
     this.port = port;
     this.members = members;
     this.info = []
   }
 
   gossipTo(member){
-
+    member.gossipTo(this.info);
   }
 
   newMember(member){
