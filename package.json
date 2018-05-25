@@ -10,6 +10,9 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.16.3",
+    "node-fetch": "^2.1.2",
+    "node-gyp": "^3.6.2",
+    "npm": "^6.1.0",
     "sleep": "^5.1.1"
   }
 }

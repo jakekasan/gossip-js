@@ -1,15 +1,18 @@
+const fetch = require('node-fetch');
+
 
 class Member {
-  constructor(port){
+  constructor(name,port){
+    this.name = name;
     this.port = port;
-    this.alive = this.getAliveState();
+    this.alive = (this.getAliveState()) ? true : false;
     this.info = this.getInfo();
     this.knownMembers = this.getKnownMembers();
   }
 
   async getKnownMembers(){
     try {
-      let response = await fetch(this.port + "/members");
+      let response = await fetch("http://localhost:" + this.port + "/members");
       let data = await response.json();
       console.log("Fetched data from ",this.port);
       return data;
@@ -21,31 +24,32 @@ class Member {
 
   async getInfo(){
     try {
-      let response = await fetch(this.port + "/info");
+      let response = await fetch("http://localhost:" + this.port + "/data");
       let data = await response.json();
       console.log("Fetched info from",this.port);
       return data;
     } catch (e) {
       console.log("Failed to fetch info from",this.port);
-      return;
+      return undefined;
     }
   }
 
   async getAliveState(){
     try {
-      let response = await fetch(this.port + "/info");
+      let response = await fetch("http://localhost:" + this.port + "/info");
       let data = await response.json();
       console.log("Checking if",this.port,"is alive");
-      return data;
+      return true;
     } catch (e) {
       console.log(this.port,"is not alive");
-      return;
+      return false;
     }
   }
 
   async gossipTo(){
+    return
     try {
-      let response = await fetch(this.port + "/")
+      let response = await fetch("http://localhost:" + this.port + "/");
     } catch (e) {
 
     } finally {
@@ -65,6 +69,13 @@ class Member {
         console.log("\t",this.info[i])
       }
     }
+  }
+
+  getString(){
+    return {
+      "name":this.name,
+      "port":this.port
+    };
   }
 
 
