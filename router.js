@@ -23,6 +23,8 @@ module.exports = function(app,gossiper){
     res.send(gossiper.memberString());
   });
 
+  app.get('/vote/init')
+
   app.get('/',(req,res) => {
     //console.log("[GET] /");
     res.send(req);

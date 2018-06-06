@@ -9,6 +9,7 @@ module.exports = class Gossiper {
     this.info = [];
     this.startPorts = 8000;
     this.endPorts = 8020;
+    this.isVoting = false
   }
 
   gossipTo(member){
@@ -138,9 +139,33 @@ module.exports = class Gossiper {
       console.log(member.name,member.port);
     }
   }
+
+  // ***************
+  // DATA and VOTING
+  // ***************
+
+  dataGather(){
+    // return a list of datas
+    // to be all promises. Once they are all resolved (or timed out), selection will begin
+  }
+
+  dataIntegrityCheck(){
+    // check each completed promise for integrity
+  }
+
+  callVote(){
+    // if there are two or more valid pieces of data, and there is no vote
+    // initiated yet, initiate it
+    this.isVoting = true
+  }
+
+  dataAcceptVote(){
+    this.isVoting
+  }
+
 }
 
-// 
+//
 // badWords = ["boobs","whoopie","mashugga","chicken"]
 // goodWords = ["alpha","beta","cupcake","donut","eclaire","froyo","gingerbread","honeycomb","ice cream sandwhich","jelly bean","kitkat","lollipop","marshmallow","nugat","oreo","pancake"]
 

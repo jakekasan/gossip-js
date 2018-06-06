@@ -37,6 +37,12 @@ module.exports = class Member {
     }
   }
 
+  getVoteInit(){
+    // return a promise
+  }
+
+  getVoteRound(){}
+
   getString(){
     return {
       "name":this.name,
