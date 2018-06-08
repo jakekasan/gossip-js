@@ -172,18 +172,26 @@ module.exports = class Gossiper {
 
     for (let i = 0; i < 5; i++) {
       let selection = Math.floor(Math.random()*this.members.length);
-      dataPromises.push(this.members[selection].getData())
+      dataPromises.push(this.members[selection].getData());
     }
 
-
-
-    // now heartbeat
-
-    let results =
+    let results = Promise.all(dataPromises).then(results => {
+      return results.map(result => { return result.json() })
+    }).catch(err => console.log(err));
 
     // if a member has a different data chain, but of same length and also valid, initiate vote
+  }
 
-
+  compareDateWithMine(data){
+    if (this.info.length != data.length){
+      return false;
+    }
+    for (var i = 0; i < this.info.length; i++) {
+      if (this.info[i] != data[i]){
+        return false;
+      }
+    }
+    return true;
   }
 
 }
