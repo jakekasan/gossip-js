@@ -6,7 +6,7 @@ module.exports = class Member {
     this.name = name;
     this.port = port;
     this.alive = this.getAliveState().then(() => true).catch(() => false);
-    this.info = this.getInfo().then(res => res.json()).catch(() => []);
+    this.info = this.getData().then(res => res.json()).catch(() => []);
     this.knownMembers = this.getKnownMembers().then(res => res.json()).catch(() => []);
   }
 
@@ -15,7 +15,7 @@ module.exports = class Member {
     return fetch("http://localhost:" + this.port + "/members");
   }
 
-  getInfo(){
+  getData(){
     return fetch("http://localhost:" + this.port + "/data");
   }
 
@@ -38,10 +38,16 @@ module.exports = class Member {
   }
 
   getVoteInit(){
-    // return a promise
+    // send a request for data choice
   }
 
-  getVoteRound(){}
+  getVoteRound(){
+    //
+  }
+
+  sendVoteResult(){
+
+  }
 
   getString(){
     return {

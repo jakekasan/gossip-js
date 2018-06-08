@@ -74,7 +74,7 @@ module.exports = class Gossiper {
     }
     for (let member of this.members) {
       if (member.alive) {
-        member.getInfo().then(res => res.json()).then(data => {
+        member.getData().then(res => res.json()).then(data => {
           if (data.length > this.info.length) {
             if (!data.map(x => { return badWords.includes(x) }).includes(true)) {
               this.info = data;
@@ -161,6 +161,29 @@ module.exports = class Gossiper {
 
   dataAcceptVote(){
     this.isVoting
+  }
+
+  // update lifecycle
+
+  update(){
+    // first, pick 5 (or so) random members to do a heartbeat with
+
+    let dataPromises = []
+
+    for (let i = 0; i < 5; i++) {
+      let selection = Math.floor(Math.random()*this.members.length);
+      dataPromises.push(this.members[selection].getData())
+    }
+
+
+
+    // now heartbeat
+
+    let results =
+
+    // if a member has a different data chain, but of same length and also valid, initiate vote
+
+
   }
 
 }
