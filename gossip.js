@@ -6,14 +6,14 @@ module.exports = class Gossiper {
     this.name = name;
     this.port = port;
     this.members = members;
-    this.info = [];
+    this.data = [];
     this.startPorts = 8000;
     this.endPorts = 8020;
     this.isVoting = false
   }
 
   gossipTo(member){
-    member.gossipTo(this.info);
+    member.gossipTo(this.data);
   }
 
   newMember(member){
@@ -75,9 +75,9 @@ module.exports = class Gossiper {
     for (let member of this.members) {
       if (member.alive) {
         member.getData().then(res => res.json()).then(data => {
-          if (data.length > this.info.length) {
+          if (data.length > this.data.length) {
             if (!data.map(x => { return badWords.includes(x) }).includes(true)) {
-              this.info = data;
+              this.data = data;
             }
           }
         }).catch(() => {});
@@ -87,8 +87,8 @@ module.exports = class Gossiper {
 
   printFullUpdate(){
     // print name, port and number of known members as well as the information the Gossiper possesses
-    console.log("Name:",this.name,", Port:",this.port,"Number of members:",this.members.length,", Number of infos:",this.info.length);
-    console.log("Last few infos:",this.info.slice(-5));
+    console.log("Name:",this.name,", Port:",this.port,"Number of members:",this.members.length,", Number of infos:",this.data.length);
+    console.log("Last few infos:",this.data.slice(-5));
   }
 
   infoString(){
@@ -99,7 +99,7 @@ module.exports = class Gossiper {
   }
 
   dataString(){
-    return JSON.stringify(this.info);
+    return JSON.stringify(this.data);
   }
 
   memberString(){
@@ -118,7 +118,7 @@ module.exports = class Gossiper {
     this.printFullUpdate();
     this.discoverMembers();
     let prob = 0.5;
-    if (this.info.map(x => { badWords.includes(x) }).includes(true)) {
+    if (this.data.map(x => { badWords.includes(x) }).includes(true)) {
       prob = 0.01;
     }
     if (Math.random() < prob) {
@@ -128,9 +128,9 @@ module.exports = class Gossiper {
 
   addAWord(){
     if (Math.random() < 0.01) {
-      this.info.push(badWords[Math.floor(Math.random()*badWords.length)]);
+      this.data.push(badWords[Math.floor(Math.random()*badWords.length)]);
     } else {
-      this.info.push(goodWords[Math.floor(Math.random()*goodWords.length)]);
+      this.data.push(goodWords[Math.floor(Math.random()*goodWords.length)]);
     }
   }
 
@@ -138,14 +138,6 @@ module.exports = class Gossiper {
     for (let member of this.members){
       console.log(member.name,member.port);
     }
-  }
-
-  // ***************
-  // DATA and VOTING
-  // ***************
-
-  acceptVote(addr){
-    console.log("Vote accepted");
   }
 
   // update lifecycle
@@ -157,12 +149,24 @@ module.exports = class Gossiper {
 
     let chosenMembers = [];
 
+    // if we have a new block, broadcast this to the 5 members
+
     for (let i = 0; i < 5; i++) {
       let selection = Math.floor(Math.random()*this.members.length);
       let member = this.members[selection];
       chosenMembers.push(member);
       dataPromises.push(member.getData());
     }
+
+    if (this.newBlockAvailable){
+      // broadcast new block to the 5 members
+      for (let member of chosenMembers) {
+        member.broadcastData();
+      }
+    }
+
+
+    // now check for new pieces of information
 
     let results = Promise.all(dataPromises).then(results => {
       return results.map(result => { return result.json() })
@@ -172,17 +176,31 @@ module.exports = class Gossiper {
 
     results = results.filter(data => compareDateWithMine(data));
 
-    results.push(this.info);
+    results.push(this.data);
 
     // if length of results is more than one, initiate a vote
 
     if (results.length > 1) {
       // initiate vote
-      this.doVote(chosenMembers,results);
+      // this.doVote(chosenMembers,results);
+      this.data = results[Math.floor(Math.random()*results.length)];
+    } else {
+      this.data = this.data;
     }
-
-
   }
+
+  // ****************************
+  // ********* VOTING ***********
+  // ****************************
+  /*
+
+  This is now irrelevant, as each gossiper will either use
+  a pre-defined scoring function for each info (if there
+  should be more than one valid) or pick one at random.
+  Either way, alternative info should still be able to
+  propagate through the network.
+
+  */
 
   doVote(members,results){
     // prompt members for vote
@@ -203,16 +221,16 @@ module.exports = class Gossiper {
   }
 
   recieveVoteConclude(data){
-    this.info = JSON.stringify(data);
+    this.data = JSON.stringify(data);
     return
   }
 
   compareDateWithMine(data){
-    if (this.info.length != data.length){
+    if (this.data.length != data.length){
       return false;
     }
-    for (var i = 0; i < this.info.length; i++) {
-      if (this.info[i] != data[i]){
+    for (var i = 0; i < this.data.length; i++) {
+      if (this.data[i] != data[i]){
         return false;
       }
     }

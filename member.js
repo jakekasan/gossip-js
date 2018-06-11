@@ -6,7 +6,7 @@ module.exports = class Member {
     this.name = name;
     this.port = port;
     this.alive = this.getAliveState().then(() => true).catch(() => false);
-    this.info = this.getData().then(res => res.json()).catch(() => []);
+    this.data = this.getData().then(res => res.json()).catch(() => []);
     this.knownMembers = this.getKnownMembers().then(res => res.json()).catch(() => []);
   }
 
@@ -30,9 +30,9 @@ module.exports = class Member {
         console.log("\t",member.info[i])
       }
     } else {
-      console.log("\nCurrent member at port",this.port,"has",this.info.length,"pieces of information");
-      for (var i = 0; i < this.info.length; i++) {
-        console.log("\t",this.info[i])
+      console.log("\nCurrent member at port",this.port,"has",this.data.length,"pieces of information");
+      for (var i = 0; i < this.data.length; i++) {
+        console.log("\t",this.data[i])
       }
     }
   }
