@@ -193,9 +193,18 @@ module.exports = class Gossiper {
   }
 
 
-  respondToVote(data){
+  respondToVoteInit(data){
     // voting logic
-    // in the future, this would check each choice for validity of each other data point before proceeding 
+    // in the future, this would check each choice for validity of each other data point before proceeding
+    // right now, this just randomly chooses from one of the elements given and returns it
+    let reply = []
+    reply.push(data[Math.floor(Math.random()*data.length)]);
+    return reply;
+  }
+
+  recieveVoteConclude(data){
+    this.info = JSON.stringify(data);
+    return
   }
 
   compareDateWithMine(data){

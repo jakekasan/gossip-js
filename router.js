@@ -17,8 +17,18 @@ module.exports = function(app,gossiper){
     res.send(gossiper.memberString());
   });
 
-  app.get('/vote/init',(req,res) => {
-    res.send(gossiper.vote)
+  app.post('/vote/init',(req,res) => {
+    // ideally this should include some sort of handshake
+    // but thats irrelevant because the "vote" mechanism
+    // is actually unnecessary as long as there is some way
+    // to compare 2 pieces of data by quality (not just length)
+
+    res.send(gossiper.respondToVote(req.body));
+  });
+
+  app.post('/vote/conclude',(req,res) => {
+    // the accepted choice is broadcast back
+    gossiper.recieveVoteConclude(req.body);
   });
 
   app.get('/',(req,res) => {
