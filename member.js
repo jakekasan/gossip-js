@@ -37,6 +37,17 @@ module.exports = class Member {
     }
   }
 
+  getVote(data){
+    return fetch("http://localhost:" + this.port + "/vote",{
+      body: JSON.stringify(data),  // the data
+      headers: {
+        "user-agent": "Mozilla/4.0 MDN Example",
+        "content-type": "application/json"
+      },
+      method: "POST"
+    });
+  }
+
   getVoteInit(){
     // send a request for data choice
   }

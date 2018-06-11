@@ -186,11 +186,16 @@ module.exports = class Gossiper {
 
   doVote(members,results){
     // prompt members for vote
-    let voteResults = Promise.all(members.map(member => { return member.getVote() })).then(results => {
+    let voteResults = Promise.all(members.map(member => { return member.getVote(results) })).then(results => {
       return results.map(result => { return result.json() });
     })
     .catch(err => console.log(err));
+  }
 
+
+  respondToVote(data){
+    // voting logic
+    // in the future, this would check each choice for validity of each other data point before proceeding 
   }
 
   compareDateWithMine(data){
