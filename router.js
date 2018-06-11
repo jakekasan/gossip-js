@@ -18,7 +18,7 @@ module.exports = function(app,gossiper){
   });
 
   app.get('/vote/init',(req,res) => {
-
+    res.send(gossiper.vote)
   });
 
   app.get('/',(req,res) => {

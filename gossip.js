@@ -144,23 +144,8 @@ module.exports = class Gossiper {
   // DATA and VOTING
   // ***************
 
-  dataGather(){
-    // return a list of datas
-    // to be all promises. Once they are all resolved (or timed out), selection will begin
-  }
-
-  dataIntegrityCheck(){
-    // check each completed promise for integrity
-  }
-
-  callVote(){
-    // if there are two or more valid pieces of data, and there is no vote
-    // initiated yet, initiate it
-    this.isVoting = true
-  }
-
-  dataAcceptVote(){
-    this.isVoting
+  acceptVote(addr){
+    console.log("Vote accepted");
   }
 
   // update lifecycle
@@ -179,7 +164,15 @@ module.exports = class Gossiper {
       return results.map(result => { return result.json() })
     }).catch(err => console.log(err));
 
-    // if a member has a different data chain, but of same length and also valid, initiate vote
+    // filter out un-unique data
+
+    results = results.filter(data => compareDateWithMine(data));
+
+    results.push(this.info);
+
+    // if length of results is more than one, initiate a vote
+
+
   }
 
   compareDateWithMine(data){
@@ -192,6 +185,13 @@ module.exports = class Gossiper {
       }
     }
     return true;
+  }
+
+  getUniqueData(dataArr){
+    let valid = [];
+    for (let data of dataArr) {
+
+    }
   }
 
 }
