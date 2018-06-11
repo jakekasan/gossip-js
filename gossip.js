@@ -155,9 +155,13 @@ module.exports = class Gossiper {
 
     let dataPromises = []
 
+    let chosenMembers = [];
+
     for (let i = 0; i < 5; i++) {
       let selection = Math.floor(Math.random()*this.members.length);
-      dataPromises.push(this.members[selection].getData());
+      let member = this.members[selection];
+      chosenMembers.push(member);
+      dataPromises.push(member.getData());
     }
 
     let results = Promise.all(dataPromises).then(results => {
@@ -172,6 +176,20 @@ module.exports = class Gossiper {
 
     // if length of results is more than one, initiate a vote
 
+    if (results.length > 1) {
+      // initiate vote
+      this.doVote(chosenMembers,results);
+    }
+
+
+  }
+
+  doVote(members,results){
+    // prompt members for vote
+    let voteResults = Promise.all(members.map(member => { return member.getVote() })).then(results => {
+      return results.map(result => { return result.json() });
+    })
+    .catch(err => console.log(err));
 
   }
 
